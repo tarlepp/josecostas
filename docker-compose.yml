@@ -9,6 +9,8 @@ services:
                 HOST_GID: $HOST_GID
         command: php-fpm
         user: $HOST_UID:$HOST_GID
+        depends_on:
+            - db
         ports:
             - 9000:9000
         volumes:
@@ -37,3 +39,18 @@ services:
             - ./:/app:cached
             # Cannot use this because of the directory rights are forced for root user
             #- /app/var/
+
+    db:
+        image: postgres:13.0
+        environment:
+            POSTGRES_PASSWORD: example
+        volumes:
+            - postgres:/var/lib/postgresql/data
+
+    adminer:
+        image: adminer
+        ports:
+            - 8080:8080
+
+volumes:
+    postgres:
