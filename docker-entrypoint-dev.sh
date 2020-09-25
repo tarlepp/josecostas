@@ -8,6 +8,8 @@ set -e
 #      we want to export host IP so that we can use that within `check.php` to
 #      check that current environment is compatible with Symfony.
 #   2) Install all dependencies
+#   3) Create database if it not exists yet
+#   4) Run possible migrations, so that database is always up to date
 #
 
 # Step 1
@@ -25,5 +27,11 @@ export DOCKER_IP=`/sbin/ip route|awk '/default/ { print $3 }'`
 
 # Step 2
 COMPOSER_MEMORY_LIMIT=-1 composer install
+
+# Step 3
+./bin/console doctrine:database:create --no-interaction --if-not-exists
+
+# Step 4
+./bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration --all-or-nothing
 
 exec "$@"
